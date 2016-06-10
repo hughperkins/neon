@@ -846,7 +846,7 @@ class NervanaGPU(Backend):
         state_save = self.rng.get_state()
 
         # smaller number for 32bit systems
-        maxexp = 32 if sys.maxint > 2**32 else 30
+        maxexp = 32 if sys.maxsize > 2**32 else 30
 
         # draw _RNG_POOL_SIZE 32 bit ints to seed LFSR on device
         # lower bound 1 to avoid seeding LFSR with 0
