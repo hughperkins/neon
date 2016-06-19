@@ -431,6 +431,7 @@ class ConvLayer(Layer):
             else:
                 winograd = 2
 
+            # fprop
             if N >=64 and C < 8:
                 self.fprop_kernels = convolution.FpropDirect(
                     lib, self.dtype, N, C, K, D, H, W, T, R, S, M, P, Q,
@@ -442,6 +443,7 @@ class ConvLayer(Layer):
                 self.fprop_kernels = FpropWinograd(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
 
+            # bprop gradI
             if winograd == 4:
                 self.bprop_kernels = BpropWinograd_4x4_3x3(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
@@ -449,6 +451,7 @@ class ConvLayer(Layer):
                 self.bprop_kernels = BpropWinograd(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
 
+            # update gradW
             if N >=32 and C < 8:
                 self.updat_kernels = convolution.UpdateDirect(
                     lib, self.dtype, N, C, K, D, H, W, T, R, S, M, P, Q,
