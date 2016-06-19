@@ -18,6 +18,7 @@ but they also cache all the computed params for complex layers.
 TODO: clean up merge with CPU layers
 TODO: remove any non-param caching code, neon layers should replace benchmark code.
 """
+from __future__ import print_function
 import logging
 import numpy as np
 import pycuda.driver as drv
@@ -403,7 +404,7 @@ class ConvLayer(Layer):
 
         ####### Cuda C ###########
         if lib.use_cudac_kernels:
-
+            print('use_cudac_kernels == True')
             #3D conv not supported yet
             if T > 1 or D > 1:
                 raise ValueError("3D Convolution not supported by CUDA C kernels.")
@@ -431,37 +432,47 @@ class ConvLayer(Layer):
             else:
                 winograd = 2
 
+            print('winograd %s' % winograd)
+
             # fprop
             if N >=64 and C < 8:
                 self.fprop_kernels = convolution.FpropDirect(
                     lib, self.dtype, N, C, K, D, H, W, T, R, S, M, P, Q,
                      pad_d, pad_h, pad_w, str_d, str_h, str_w, relu, bsum)
+                print('fprop: FpropDirect')
             elif winograd == 4:
                 self.fprop_kernels = FpropWinograd_4x4_3x3(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
+                print('fprop: FpropWinograd_4x4_3x3')
             else:
                 self.fprop_kernels = FpropWinograd(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
+                print('fprop: FpropWinograd')
 
             # bprop gradI
             if winograd == 4:
                 self.bprop_kernels = BpropWinograd_4x4_3x3(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
+                print('bprop: BpropWinograd_4x4_3x3')
             else:
                 self.bprop_kernels = BpropWinograd(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w, relu, bsum)
+                print('bprop: BpropWinograd')
 
             # update gradW
             if N >=32 and C < 8:
                 self.updat_kernels = convolution.UpdateDirect(
                     lib, self.dtype, N, C, K, D, H, W, T, R, S, M, P, Q,
                      pad_d, pad_h, pad_w, str_d, str_h, str_w)
+                print('update: UpdateDirect')
             elif winograd == 4:
                 self.updat_kernels = UpdateWinograd_3x3_4x4(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w)
+                print('update: UpdateWinograd_3x3_4x4')
             else:
                 self.updat_kernels = UpdateWinograd(
                     lib, self.dtype, N, C, K, H, W, P, Q, pad_h, pad_w)
+                print('update: UpdateWinograd')
 
         ####### Direct ###########
         else:
