@@ -424,7 +424,7 @@ class ConvLayer(Layer):
         elif lib.enable_winograd and R == 3 and S == 3 and all(x == 1 for x in (D,M,T,str_w,str_h,str_d)):
             from winograd_conv import (FpropWinograd, BpropWinograd, UpdateWinograd,
                                        FpropWinograd_4x4_3x3, BpropWinograd_4x4_3x3, UpdateWinograd_3x3_4x4)
-
+            print('Winograd')
             # Temp for now till we can autotune
             # 2 is safer for fp16 without batchnorm
             if (dtype == np.float32 and lib.enable_winograd != 2) or lib.enable_winograd == 4:
@@ -476,6 +476,7 @@ class ConvLayer(Layer):
 
         ####### Direct ###########
         else:
+            print('Direct')
             vec_size = 4 if self.dtype.itemsize == 4 else 8
 
             self.fprop_kernels = convolution.FpropDirect(
