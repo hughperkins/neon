@@ -1163,6 +1163,7 @@ class UpdateWinograd_3x3_4x4(KernelGroup):
 
 @context_dependent_memoize
 def _get_fprop_filter_trans_kernel(dtype):
+    print('_get_fprop_filter_trans_kernel(%s)' % dtype)
 
     code = r"""
 %(common)s
@@ -1280,6 +1281,7 @@ __global__ void fprop_filter_trans(%(type4)s* T, const %(type)s* F, int RSK, int
 
 @context_dependent_memoize
 def _get_bprop_filter_trans_kernel(dtype):
+    print('_get_bprop_filter_trans_kernel(%s)' % dtype)
 
     code = r"""
 %(common)s
@@ -1424,6 +1426,7 @@ __global__ void bprop_filter_trans(
 
 @context_dependent_memoize
 def _get_update_image_trans_kernel(dtype):
+    print('_get_update_image_trans_kernel(%s)' % dtype)
 
     code = r"""
 #include <stdio.h>
@@ -1639,6 +1642,7 @@ __global__ void update_image_trans(
 
 @context_dependent_memoize
 def _get_xprop_image_trans_4x4_kernel(dtype):
+    print('_get_xprop_image_trans_4x4_kernel(%s)' % dtype)
 
     code = r"""
 %(common)s
@@ -1821,7 +1825,7 @@ __global__ void xprop_image_trans_4x4(
 
 @context_dependent_memoize
 def _get_fprop_filter_trans_4x4_kernel(dtype):
-
+    print('_get_fprop_filter_trans_4x4_kernel(%s)' % dtype)
     code = r"""
 %(common)s
 
@@ -1944,6 +1948,7 @@ __global__ void fprop_filter_trans_4x4(
 
 @context_dependent_memoize
 def _get_bprop_filter_trans_4x4_kernel(dtype):
+    print('_get_bprop_filter_trans_4x4_kernel(%s)' % dtype)
 
     code = r"""
 %(common)s
@@ -2090,6 +2095,7 @@ __global__ void bprop_filter_trans_4x4(
 
 @context_dependent_memoize
 def _get_update_image_trans_4x4_kernel(dtype):
+    print('_get_update_image_trans_4x4_kernel(%s)' % dtype)
 
     code = r"""
 
@@ -2307,6 +2313,7 @@ __global__ void update_image_trans_4x4(
 
 @context_dependent_memoize
 def _get_update_delta_trans_4x4_kernel(dtype):
+    print('_get_update_delta_trans_4x4_kernel(%s)' % dtype)
 
     code = r"""
 
